@@ -26,11 +26,21 @@ header{
   justify-content:space-between;
   gap:10px;
 }
-header .logo{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
-header .logo .icon{font-size:1.8rem;flex-shrink:0;}
-header h1{font-size:1.05rem;font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-header h1 small{display:block;font-size:.72rem;opacity:.8;font-weight:400;}
-.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+header .logo{display:flex;align-items:center;gap:8px;flex:1;min-width:0;overflow:hidden;}
+header .logo .icon{font-size:1.6rem;flex-shrink:0;}
+header .logo > div{min-width:0;overflow:hidden;}
+header h1{font-size:1rem;font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+header h1 small{display:block;font-size:.7rem;opacity:.8;font-weight:400;}
+.header-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+
+@media(max-width:400px){
+  header{padding:12px 12px;}
+  header .logo .icon{font-size:1.3rem;}
+  header h1{font-size:.85rem;}
+  header h1 small{display:none;}
+  .lang-btn{padding:4px 7px;font-size:.68rem;}
+  .btn-gear{width:32px;height:32px;font-size:1rem;}
+}
 
 /* ── LANGUAGE SELECTOR ── */
 .lang-btns{display:flex;gap:4px;}
@@ -372,8 +382,15 @@ input:focus,select:focus{outline:none;border-color:var(--blue);background:#fff;}
 <div id="toast"></div>
 
 <script>
-const NOMES_KEY = 'form_nomes_v1';
 const ADMIN_PASSWORD = 'Joy1234';
+const SB_URL = 'https://fpihpsmgldruorsotlon.supabase.co';
+const SB_KEY = 'sb_publishable_W5Wwrh5N3HsjUdx8IOvOJg_ovwoawXg';
+const SB_HEADERS = {
+  'apikey': SB_KEY,
+  'Authorization': 'Bearer ' + SB_KEY,
+  'Content-Type': 'application/json'
+};
+
 let tipoSelecionado = '';
 let nomesCache = [];
 let currentLang = localStorage.getItem('form_lang') || 'pt';
@@ -395,7 +412,6 @@ const T = {
     lblQtdFuridashi: 'PL',
     placeholderQtd: 'Ex: 150',
     placeholderQtdFuridashi: 'Ex: 10',
-    lblProdCalc: 'Produtividade calculada:',
     sumTitle: '✅ Resumo do Registro',
     sumNome: 'Funcionário',
     sumData: 'Data',
@@ -417,15 +433,12 @@ const T = {
     errQtd: 'Informe a quantidade!',
     toastAdded: 'adicionado!',
     toastRemoved: '🗑 Removido.',
-    toastUpdated: '🔄 Lista atualizada!',
     toastWhatsApp: '✅ WhatsApp aberto!',
     toastNomeEmpty: 'Digite um nome!',
     toastNomeDup: 'Nome já cadastrado!',
     confirmRemove: 'Remover',
     confirmRemoveSuffix: '?',
     emptyNomes: 'Nenhum nome cadastrado.',
-    prodAcima: 'Acima da meta (175/hr)',
-    prodAbaixo: 'Abaixo da meta (175/hr)',
     msgHeader: '📊 *Registro de Produtividade*',
     msgFuncionario: 'Funcionário',
     msgData: 'Data',
@@ -443,7 +456,7 @@ const T = {
     pwdCancel: 'Cancelar',
   },
   jp: {
-    headerTitle: '生産性記録フォーム',
+    headerTitle: '生産性記録',
     formTitle: '📝 データを入力してください',
     lblNome: '従業員名',
     optPlaceholder: '名前を選択',
@@ -457,7 +470,6 @@ const T = {
     lblQtdFuridashi: 'PL数量',
     placeholderQtd: '例: 150',
     placeholderQtdFuridashi: '例: 10',
-    lblProdCalc: '計算された生産性:',
     sumTitle: '✅ 登録内容の確認',
     sumNome: '従業員',
     sumData: '日付',
@@ -479,15 +491,12 @@ const T = {
     errQtd: '数量を入力してください！',
     toastAdded: '追加しました！',
     toastRemoved: '🗑 削除しました。',
-    toastUpdated: '🔄 リストを更新しました！',
     toastWhatsApp: '✅ WhatsAppを開きました！',
     toastNomeEmpty: '名前を入力してください！',
     toastNomeDup: 'この名前はすでに登録されています！',
     confirmRemove: '削除しますか',
     confirmRemoveSuffix: '？',
     emptyNomes: '名前が登録されていません。',
-    prodAcima: '目標達成 (175/hr以上)',
-    prodAbaixo: '目標未達 (175/hr未満)',
     msgHeader: '📊 *生産性記録*',
     msgFuncionario: '従業員',
     msgData: '日付',
@@ -519,7 +528,6 @@ const T = {
     lblQtdFuridashi: 'Jumlah PL',
     placeholderQtd: 'Contoh: 150',
     placeholderQtdFuridashi: 'Contoh: 10',
-    lblProdCalc: 'Produktivitas terhitung:',
     sumTitle: '✅ Ringkasan Catatan',
     sumNome: 'Karyawan',
     sumData: 'Tanggal',
@@ -541,15 +549,12 @@ const T = {
     errQtd: 'Masukkan jumlah!',
     toastAdded: 'ditambahkan!',
     toastRemoved: '🗑 Dihapus.',
-    toastUpdated: '🔄 Daftar diperbarui!',
     toastWhatsApp: '✅ WhatsApp dibuka!',
     toastNomeEmpty: 'Masukkan nama!',
     toastNomeDup: 'Nama sudah terdaftar!',
     confirmRemove: 'Hapus',
     confirmRemoveSuffix: '?',
     emptyNomes: 'Belum ada nama terdaftar.',
-    prodAcima: 'Di atas target (175/hr)',
-    prodAbaixo: 'Di bawah target (175/hr)',
     msgHeader: '📊 *Catatan Produktivitas*',
     msgFuncionario: 'Karyawan',
     msgData: 'Tanggal',
@@ -572,19 +577,12 @@ const T = {
 function setLang(lang){
   currentLang = lang;
   localStorage.setItem('form_lang', lang);
-
-  // Update button states
   ['pt','jp','id'].forEach(l => {
     document.getElementById('lang-'+l).classList.toggle('active', l===lang);
   });
-
   const t = T[lang];
-
-  // Header
   document.getElementById('header-title').textContent = t.headerTitle;
   document.getElementById('btn-gear').title = t.gearTitle;
-
-  // Form
   document.getElementById('form-title').textContent = t.formTitle;
   document.getElementById('lbl-nome').textContent = t.lblNome;
   document.getElementById('opt-placeholder').textContent = t.optPlaceholder;
@@ -594,8 +592,6 @@ function setLang(lang){
   document.getElementById('lbl-tipo').textContent = t.lblTipo;
   document.getElementById('tipo-leitura-name').textContent = t.tipoLeitura;
   document.getElementById('tipo-furidashi-name').textContent = t.tipoFuridashi;
-
-  // Quantity label depends on current tipo
   if(tipoSelecionado === 'furidashi'){
     document.getElementById('lbl-qtd').textContent = t.lblQtdFuridashi;
     document.getElementById('f-qtd').placeholder = t.placeholderQtdFuridashi;
@@ -603,8 +599,6 @@ function setLang(lang){
     document.getElementById('lbl-qtd').textContent = t.lblQtd;
     document.getElementById('f-qtd').placeholder = t.placeholderQtd;
   }
-
-  // Summary
   document.getElementById('sum-title').textContent = t.sumTitle;
   document.getElementById('sum-lbl-nome').textContent = t.sumNome;
   document.getElementById('sum-lbl-data').textContent = t.sumData;
@@ -612,49 +606,29 @@ function setLang(lang){
   document.getElementById('sum-lbl-tipo').textContent = t.sumTipo;
   document.getElementById('sum-lbl-qtd').textContent = t.sumQtd;
   document.getElementById('sum-lbl-prod').textContent = t.sumProd;
-
-  // Send button & footer
   document.getElementById('btn-send-text').textContent = t.btnSend;
   document.getElementById('footer-note').textContent = t.footerNote;
-
-  // Admin panel
   document.getElementById('admin-title').textContent = t.adminTitle;
   document.getElementById('admin-info').textContent = t.adminInfo;
   document.getElementById('admin-input').placeholder = t.adminInputPlaceholder;
   document.getElementById('btn-add-nome').textContent = t.btnAdd;
-
-  // Password overlay
   document.getElementById('pwd-title').textContent = t.pwdTitle;
   document.getElementById('pwd-desc').textContent = t.pwdDesc;
   document.getElementById('pwd-err').textContent = t.pwdErr;
   document.getElementById('btn-pwd-cancel').textContent = t.pwdCancel;
-
   renderNomeList();
 }
 
-// ── SUPABASE CONFIG ──
-const SB_URL = 'https://fpihpsmgldruorsotlon.supabase.co';
-const SB_KEY = 'sb_publishable_W5Wwrh5N3HsjUdx8IOvOJg_ovwoawXg';
-const SB_HEADERS = {
-  'apikey': SB_KEY,
-  'Authorization': 'Bearer ' + SB_KEY,
-  'Content-Type': 'application/json'
-};
-
-// ── NOMES via SUPABASE ──
+// ── SUPABASE ──
 async function carregarNomesAsync(){
   try {
-    const r = await fetch(`${SB_URL}/rest/v1/funcionarios?select=nome&order=nome`, {
-      headers: SB_HEADERS
-    });
+    const r = await fetch(`${SB_URL}/rest/v1/funcionarios?select=nome&order=nome`, { headers: SB_HEADERS });
     if(!r.ok) throw new Error('Supabase error');
     const data = await r.json();
     nomesCache = data.map(row => row.nome);
-    return nomesCache;
   } catch(e) {
     console.error('Erro ao carregar nomes:', e);
     nomesCache = [];
-    return nomesCache;
   }
 }
 
@@ -671,12 +645,6 @@ function alerta(msg){
   document.getElementById('alert-msg').textContent = msg;
   a.classList.add('show');
   setTimeout(()=>a.classList.remove('show'), 3500);
-}
-
-function formatData(d){
-  if(!d) return '—';
-  const [y,m,dd]=d.split('-');
-  return `${dd}/${m}/${y}`;
 }
 
 function horasEntre(ini,fim){
@@ -702,24 +670,23 @@ function selecionarTipo(tipo){
   document.getElementById('btn-leitura').classList.toggle('selected', tipo==='leitura');
   document.getElementById('btn-furidashi').classList.toggle('selected', tipo==='furidashi');
   const t = T[currentLang];
-  const lbl = document.getElementById('lbl-qtd');
   if(tipo==='furidashi'){
-    lbl.textContent = t.lblQtdFuridashi;
+    document.getElementById('lbl-qtd').textContent = t.lblQtdFuridashi;
     document.getElementById('f-qtd').placeholder = t.placeholderQtdFuridashi;
   } else {
-    lbl.textContent = t.lblQtd;
+    document.getElementById('lbl-qtd').textContent = t.lblQtd;
     document.getElementById('f-qtd').placeholder = t.placeholderQtd;
   }
 }
 
 // ── WHATSAPP ──
 function enviarWhatsApp(){
-  const nome   = document.getElementById('f-nome').value;
-  const data   = document.getElementById('f-data').value;
-  const ini    = document.getElementById('f-inicio').value;
-  const fim    = document.getElementById('f-fim').value;
-  const qtd    = parseFloat(document.getElementById('f-qtd').value);
-  const t      = T[currentLang];
+  const nome = document.getElementById('f-nome').value;
+  const data = document.getElementById('f-data').value;
+  const ini  = document.getElementById('f-inicio').value;
+  const fim  = document.getElementById('f-fim').value;
+  const qtd  = parseFloat(document.getElementById('f-qtd').value);
+  const t    = T[currentLang];
 
   if(!nome){ alerta(t.errNome); return; }
   if(!data){ alerta(t.errData); return; }
@@ -730,14 +697,11 @@ function enviarWhatsApp(){
 
   const h = horasEntre(ini,fim);
   const prod = h ? qtd/h : null;
-
   const obj = { data, horaInicio:ini, horaFim:fim, colaborador:nome, tipo:tipoSelecionado, quantidade:qtd };
   const code = '[PROD:'+btoa(unescape(encodeURIComponent(JSON.stringify(obj))))+']';
-
   const tipoFmt = tipoSelecionado==='leitura' ? t.tipoLeituraFull : t.tipoFuridashiFull;
   const qtdFmt  = tipoSelecionado==='furidashi' ? qtd+' PL' : qtd+' unid';
   const prodFmt = prod!==null ? prod.toFixed(1)+(tipoSelecionado==='furidashi'?' PL/hr':'/hr') : '—';
-
   const [dy,dm,dd]=data.split('-');
 
   const msg = `${t.msgHeader}\n`
@@ -751,7 +715,6 @@ function enviarWhatsApp(){
     +`━━━━━━━━━━━━━━━━━━\n`
     +`${t.msgCodigo}\n${code}`;
 
-  // Mostrar resumo
   document.getElementById('s-nome').textContent = nome;
   document.getElementById('s-data').textContent = `${dd}/${dm}/${dy}`;
   document.getElementById('s-hora').textContent = `${ini} → ${fim}`;
@@ -766,11 +729,9 @@ function enviarWhatsApp(){
 
 // ── PASSWORD ──
 function abrirAdmin(){
-  // Show password prompt first
   const overlay = document.getElementById('pwd-overlay');
   const input = document.getElementById('pwd-input');
-  const errEl = document.getElementById('pwd-err');
-  errEl.classList.remove('show');
+  document.getElementById('pwd-err').classList.remove('show');
   input.value = '';
   overlay.classList.add('open');
   setTimeout(()=>input.focus(), 100);
@@ -820,14 +781,13 @@ async function adicionarNome(){
   const t = T[currentLang];
   if(!nome){ toast(t.toastNomeEmpty, true); return; }
   if(nomesCache.includes(nome)){ toast(t.toastNomeDup, true); return; }
-
   try {
     const r = await fetch(`${SB_URL}/rest/v1/funcionarios`, {
       method: 'POST',
       headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' },
       body: JSON.stringify({ nome })
     });
-    if(!r.ok) throw new Error('Erro ao adicionar');
+    if(!r.ok) throw new Error();
     await carregarNomesAsync();
     inp.value = '';
     renderNomeList();
@@ -841,13 +801,12 @@ async function adicionarNome(){
 async function removerNome(nome){
   const t = T[currentLang];
   if(!confirm(t.confirmRemove+' "'+nome+'"'+t.confirmRemoveSuffix)) return;
-
   try {
     const r = await fetch(`${SB_URL}/rest/v1/funcionarios?nome=eq.${encodeURIComponent(nome)}`, {
       method: 'DELETE',
       headers: SB_HEADERS
     });
-    if(!r.ok) throw new Error('Erro ao remover');
+    if(!r.ok) throw new Error();
     await carregarNomesAsync();
     renderNomeList();
     popularNomes();
@@ -860,8 +819,8 @@ async function removerNome(nome){
 // ── INIT ──
 (async function(){
   const agora = new Date();
-  document.getElementById('f-data').value  = agora.toISOString().split('T')[0];
-  document.getElementById('f-inicio').value= agora.toTimeString().slice(0,5);
+  document.getElementById('f-data').value   = agora.toISOString().split('T')[0];
+  document.getElementById('f-inicio').value = agora.toTimeString().slice(0,5);
   await carregarNomesAsync();
   setLang(currentLang);
   popularNomes();
@@ -869,4 +828,3 @@ async function removerNome(nome){
 </script>
 </body>
 </html>
-
