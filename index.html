@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Registro de Produtividade / 生産性記録</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--blue:#2b6cb0;--blue-dark:#1a365d;--green:#2f855a;--red:#c53030;--orange:#c05621;}
+
+body{
+  font-family:'Segoe UI','Meiryo',sans-serif;
+  background:#f0f4f8;
+  color:#2d3748;
+  min-height:100vh;
+  padding-bottom:40px;
+}
+
+/* ── HEADER ── */
+header{
+  background:linear-gradient(135deg,var(--blue),var(--blue-dark));
+  color:#fff;
+  padding:16px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+header .logo{display:flex;align-items:center;gap:10px;}
+header .logo .icon{font-size:1.8rem;}
+header h1{font-size:1.05rem;font-weight:700;line-height:1.3;}
+header h1 small{display:block;font-size:.72rem;opacity:.8;font-weight:400;}
+.btn-gear{
+  background:rgba(255,255,255,.15);
+  border:none;color:#fff;
+  width:40px;height:40px;
+  border-radius:50%;
+  font-size:1.1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.btn-gear:hover{background:rgba(255,255,255,.25);}
+
+/* ── CONTAINER ── */
+.container{max-width:520px;margin:0 auto;padding:20px 16px;}
+
+/* ── CARD ── */
+.card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.1);margin-bottom:16px;}
+.card h2{font-size:.95rem;font-weight:700;color:var(--blue);margin-bottom:16px;display:flex;align-items:center;gap:6px;}
+.card h2 .jp{font-weight:400;color:#a0aec0;font-size:.78rem;}
+
+/* ── FORM FIELDS ── */
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.fg:last-of-type{margin-bottom:0;}
+label{font-size:.78rem;font-weight:700;color:#4a5568;}
+label .jp{font-weight:400;color:#a0aec0;font-size:.7rem;display:inline;}
+input,select{
+  padding:13px 14px;
+  border:1.5px solid #e2e8f0;
+  border-radius:10px;
+  font-size:1rem;
+  color:#2d3748;
+  background:#f7fafc;
+  width:100%;
+  -webkit-appearance:none;
+  font-family:inherit;
+}
+input:focus,select:focus{outline:none;border-color:var(--blue);background:#fff;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* ── TIPO SELECTOR ── */
+.tipo-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.tipo-btn{
+  padding:14px 10px;
+  border:2px solid #e2e8f0;
+  border-radius:12px;
+  background:#f7fafc;
+  cursor:pointer;
+  text-align:center;
+  transition:.2s;
+  font-family:inherit;
+}
+.tipo-btn:hover{border-color:var(--blue);background:#ebf4ff;}
+.tipo-btn.selected{border-color:var(--blue);background:#ebf4ff;}
+.tipo-btn.selected.furidashi{border-color:var(--green);background:#f0fff4;}
+.tipo-btn .tipo-icon{font-size:1.6rem;display:block;margin-bottom:4px;}
+.tipo-btn .tipo-name{font-size:.78rem;font-weight:700;color:#2d3748;}
+.tipo-btn .tipo-jp{font-size:.68rem;color:#a0aec0;display:block;}
+
+/* ── SEND BUTTON ── */
+.btn-send{
+  width:100%;
+  padding:16px;
+  background:#25D366;
+  color:#fff;
+  border:none;
+  border-radius:14px;
+  font-size:1rem;
+  font-weight:700;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  font-family:inherit;
+  box-shadow:0 4px 12px rgba(37,211,102,.4);
+}
+.btn-send:hover{background:#128C7E;}
+.btn-send:active{transform:scale(.98);}
+.btn-send svg{width:22px;height:22px;fill:#fff;}
+
+/* ── ALERT ── */
+.alert{
+  background:#fff5f5;
+  border:1px solid #fed7d7;
+  border-radius:10px;
+  padding:12px 14px;
+  font-size:.82rem;
+  color:var(--red);
+  margin-bottom:14px;
+  display:none;
+}
+.alert.show{display:block;}
+
+/* ── SUMMARY BOX ── */
+.summary{
+  background:#ebf8ff;
+  border:1px solid #bee3f8;
+  border-radius:12px;
+  padding:14px 16px;
+  margin-bottom:14px;
+  display:none;
+}
+.summary.show{display:block;}
+.summary .sum-title{font-size:.78rem;font-weight:700;color:var(--blue);margin-bottom:8px;}
+.summary table{width:100%;font-size:.82rem;border-collapse:collapse;}
+.summary td{padding:3px 0;}
+.summary td:first-child{color:#718096;width:50%;}
+.summary td:last-child{font-weight:600;color:#2d3748;}
+
+/* ── ADMIN PANEL ── */
+.admin-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);
+  z-index:100;display:none;
+  align-items:flex-end;
+}
+.admin-overlay.open{display:flex;}
+.admin-panel{
+  background:#fff;
+  border-radius:20px 20px 0 0;
+  padding:24px 20px 32px;
+  width:100%;
+  max-height:75vh;
+  overflow-y:auto;
+  animation:slideUp .25s ease-out;
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.admin-panel h3{font-size:1rem;font-weight:700;color:var(--blue);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;}
+.admin-panel h3 .jp{font-weight:400;color:#a0aec0;font-size:.78rem;}
+.btn-close-admin{background:none;border:none;font-size:1.3rem;cursor:pointer;color:#718096;padding:4px;}
+.admin-add-row{display:flex;gap:10px;margin-bottom:16px;}
+.admin-add-row input{flex:1;}
+.btn-add-nome{
+  padding:10px 16px;background:var(--blue);color:#fff;border:none;
+  border-radius:10px;font-weight:700;cursor:pointer;font-size:.85rem;white-space:nowrap;
+  font-family:inherit;
+}
+.nome-list{list-style:none;}
+.nome-list li{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 12px;border:1px solid #e2e8f0;border-radius:10px;
+  margin-bottom:8px;background:#f7fafc;font-size:.88rem;font-weight:600;
+}
+.btn-del-nome{background:none;border:none;color:var(--red);cursor:pointer;font-size:1rem;padding:2px;}
+.empty-nomes{text-align:center;padding:20px;color:#a0aec0;font-size:.85rem;}
+.admin-info{background:#fffbeb;border:1px solid #fbd38d;border-radius:8px;padding:10px 12px;font-size:.75rem;color:#744210;margin-bottom:14px;}
+
+/* ── SUCCESS TOAST ── */
+#toast{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#2f855a;color:#fff;padding:10px 20px;border-radius:10px;
+  font-size:.85rem;font-weight:600;opacity:0;transition:.3s;pointer-events:none;z-index:200;
+  white-space:nowrap;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#toast.err{background:var(--red);}
+
+/* ── PROD DISPLAY ── */
+.prod-badge{
+  display:inline-block;padding:4px 12px;border-radius:999px;
+  font-size:.8rem;font-weight:700;margin-top:6px;
+}
+.prod-badge.ok{background:#c6f6d5;color:#276749;}
+.prod-badge.bad{background:#fed7d7;color:#c53030;}
+.prod-badge.neutral{background:#e2e8f0;color:#4a5568;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="icon">📋</div>
+    <div>
+      <h1>Registro de Produtividade <small>生産性記録フォーム</small></h1>
+    </div>
+  </div>
+  <button class="btn-gear" onclick="abrirAdmin()" title="Gerenciar nomes / 名前管理">⚙️</button>
+</header>
+
+<div class="container">
+
+  <div id="alert" class="alert">⚠️ <span id="alert-msg"></span></div>
+
+  <!-- FORM -->
+  <div class="card">
+    <h2>📝 Preencha seus dados <span class="jp">/ データを入力してください</span></h2>
+
+    <div class="fg">
+      <label>Nome do Funcionário / <span class="jp">従業員名</span></label>
+      <select id="f-nome">
+        <option value="">Selecione seu nome / 名前を選択</option>
+      </select>
+    </div>
+
+    <div class="fg">
+      <label>Data / <span class="jp">日付</span></label>
+      <input type="date" id="f-data"/>
+    </div>
+
+    <div class="row2">
+      <div class="fg">
+        <label>Início / <span class="jp">開始時刻</span></label>
+        <input type="time" id="f-inicio"/>
+      </div>
+      <div class="fg">
+        <label>Término / <span class="jp">終了時刻</span></label>
+        <input type="time" id="f-fim"/>
+      </div>
+    </div>
+
+    <div class="fg">
+      <label>Tipo de Serviço / <span class="jp">サービス種別</span></label>
+      <div class="tipo-btns">
+        <button class="tipo-btn" id="btn-leitura" onclick="selecionarTipo('leitura')">
+          <span class="tipo-icon">📖</span>
+          <span class="tipo-name">Leitura/Colagem</span>
+          <span class="tipo-jp">読取・貼付</span>
+        </button>
+        <button class="tipo-btn furidashi" id="btn-furidashi" onclick="selecionarTipo('furidashi')">
+          <span class="tipo-icon">📦</span>
+          <span class="tipo-name">Furidashi/Despach.</span>
+          <span class="tipo-jp">振出・発送</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="fg">
+      <label id="lbl-qtd">Quantidade / <span class="jp">数量</span></label>
+      <input type="number" id="f-qtd" placeholder="Ex: 150" min="0" inputmode="numeric" onchange="calcularPreview()"/>
+    </div>
+
+    <!-- PREVIEW DE PRODUTIVIDADE -->
+    <div id="prod-preview" style="display:none;margin-top:-4px;margin-bottom:14px;">
+      <div style="font-size:.72rem;color:#718096;margin-bottom:3px">Produtividade calculada / 計算された生産性:</div>
+      <span id="prod-badge" class="prod-badge neutral">—</span>
+    </div>
+
+  </div>
+
+  <!-- RESUMO -->
+  <div id="summary" class="summary">
+    <div class="sum-title">✅ Resumo do Registro / 登録内容の確認</div>
+    <table>
+      <tr><td>Funcionário / 従業員</td><td id="s-nome">—</td></tr>
+      <tr><td>Data / 日付</td><td id="s-data">—</td></tr>
+      <tr><td>Horário / 時刻</td><td id="s-hora">—</td></tr>
+      <tr><td>Tipo / 種別</td><td id="s-tipo">—</td></tr>
+      <tr><td>Qtd / PL</td><td id="s-qtd">—</td></tr>
+      <tr><td>Produtividade / 生産性</td><td id="s-prod">—</td></tr>
+    </table>
+  </div>
+
+  <!-- BOTÃO WHATSAPP -->
+  <button class="btn-send" onclick="enviarWhatsApp()">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+    Enviar por WhatsApp / WhatsAppで送信
+  </button>
+
+  <div style="text-align:center;font-size:.72rem;color:#a0aec0;margin-top:12px;">
+    Após enviar, o gerente importará os dados no dashboard.<br>
+    送信後、管理者がダッシュボードにデータを取り込みます。
+  </div>
+
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-overlay" id="admin-overlay" onclick="fecharAdminExterno(event)">
+  <div class="admin-panel">
+    <h3>
+      ⚙️ Gerenciar Funcionários <span class="jp">/ 従業員管理</span>
+      <button class="btn-close-admin" onclick="fecharAdmin()">✕</button>
+    </h3>
+    <div class="admin-info">
+      ℹ️ Adicione os nomes dos funcionários aqui. Esta lista aparecerá no formulário.
+      <br>従業員名を追加してください。この一覧がフォームに表示されます。
+    </div>
+    <div class="admin-add-row">
+      <input type="text" id="admin-input" placeholder="Nome do funcionário / 従業員名" onkeydown="if(event.key==='Enter')adicionarNome()"/>
+      <button class="btn-add-nome" onclick="adicionarNome()">＋ Adicionar</button>
+    </div>
+    <ul class="nome-list" id="nome-list"></ul>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const NOMES_KEY = 'form_nomes_v1';
+const META_LEITURA = 175;
+let tipoSelecionado = '';
+let nomesCache = [];
+
+// ── HTTP MODE DETECTION ──
+const IS_HTTP = location.protocol === 'http:' || location.protocol === 'https:';
+
+// ── NOMES: prioridade: hash URL → servidor HTTP → localStorage ──
+async function carregarNomesAsync(){
+  // 1. Link compartilhado com nomes no hash (#nomes=BASE64)
+  const hashMatch = location.hash.match(/#nomes=([A-Za-z0-9+/=]+)/);
+  if(hashMatch){
+    try{
+      const decoded = JSON.parse(decodeURIComponent(escape(atob(hashMatch[1]))));
+      if(Array.isArray(decoded) && decoded.length){
+        nomesCache = decoded;
+        // Salva no localStorage para próximas visitas sem o hash
+        localStorage.setItem(NOMES_KEY, JSON.stringify(nomesCache));
+        mostrarBannerAtualizado();
+        return nomesCache;
+      }
+    } catch(e){}
+  }
+  // 2. Servidor local (iniciar.bat)
+  if(IS_HTTP){
+    try{
+      const r = await fetch('/nomes');
+      const data = await r.json();
+      if(Array.isArray(data)){ nomesCache = data; return nomesCache; }
+    } catch(e){}
+  }
+  // 3. localStorage (fallback)
+  nomesCache = JSON.parse(localStorage.getItem(NOMES_KEY)||'[]');
+  return nomesCache;
+}
+
+function mostrarBannerAtualizado(){
+  const existing = document.getElementById('banner-nomes');
+  if(existing) return;
+  const b = document.createElement('div');
+  b.id = 'banner-nomes';
+  b.style.cssText = 'background:#c6f6d5;border:1px solid #9ae6b4;border-radius:10px;padding:10px 14px;font-size:.78rem;color:#276749;margin-bottom:14px;display:flex;align-items:center;gap:8px;';
+  b.innerHTML = '✅ Lista de nomes atualizada pelo gerente! / 管理者から名前リストが更新されました。';
+  const container = document.querySelector('.container');
+  if(container) container.insertBefore(b, container.firstChild);
+  setTimeout(()=>b.remove(), 5000);
+}
+
+async function salvarNomesAsync(arr){
+  nomesCache = [...arr];
+  if(IS_HTTP){
+    try{
+      await fetch('/nomes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(arr)});
+    } catch(e){
+      localStorage.setItem(NOMES_KEY, JSON.stringify(arr));
+    }
+  } else {
+    localStorage.setItem(NOMES_KEY, JSON.stringify(arr));
+  }
+}
+
+function carregarNomes(){ return nomesCache; }
+function salvarNomes(arr){ salvarNomesAsync(arr); }
+
+function toast(msg, err=false){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className='show'+(err?' err':'');
+  setTimeout(()=>t.className='', 2600);
+}
+
+function alerta(msg){
+  const a = document.getElementById('alert');
+  document.getElementById('alert-msg').textContent = msg;
+  a.classList.add('show');
+  setTimeout(()=>a.classList.remove('show'), 3500);
+}
+
+function formatData(d){
+  if(!d) return '—';
+  const [y,m,dd]=d.split('-');
+  return `${dd}/${m}/${y}`;
+}
+
+function horasEntre(ini,fim){
+  if(!ini||!fim) return null;
+  const [ih,im]=ini.split(':').map(Number);
+  const [fh,fm]=fim.split(':').map(Number);
+  const h=((fh*60+fm)-(ih*60+im))/60;
+  return h>0?h:null;
+}
+
+// ── POPULATE NOME SELECT ──
+function popularNomes(){
+  const sel = document.getElementById('f-nome');
+  const nomes = carregarNomes();
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Selecione seu nome / 名前を選択</option>'
+    + nomes.map(n=>`<option value="${n}"${n===cur?' selected':''}>${n}</option>`).join('');
+}
+
+// ── TIPO SELECTOR ──
+function selecionarTipo(tipo){
+  tipoSelecionado = tipo;
+  document.getElementById('btn-leitura').classList.toggle('selected', tipo==='leitura');
+  document.getElementById('btn-furidashi').classList.toggle('selected', tipo==='furidashi');
+  const lbl = document.getElementById('lbl-qtd');
+  if(tipo==='furidashi'){
+    lbl.innerHTML = 'PL / <span class="jp">PL数量</span>';
+    document.getElementById('f-qtd').placeholder = 'Ex: 10';
+  } else {
+    lbl.innerHTML = 'Quantidade / <span class="jp">数量</span>';
+    document.getElementById('f-qtd').placeholder = 'Ex: 150';
+  }
+  calcularPreview();
+}
+
+// ── PROD PREVIEW ──
+function calcularPreview(){
+  const ini = document.getElementById('f-inicio').value;
+  const fim = document.getElementById('f-fim').value;
+  const qtd = parseFloat(document.getElementById('f-qtd').value);
+  const badge = document.getElementById('prod-badge');
+  const preview = document.getElementById('prod-preview');
+
+  if(!ini||!fim||isNaN(qtd)||qtd<=0||!tipoSelecionado){ preview.style.display='none'; return; }
+  const h = horasEntre(ini,fim);
+  if(!h){ preview.style.display='none'; return; }
+
+  const prod = qtd/h;
+  preview.style.display='block';
+
+  if(tipoSelecionado==='leitura'){
+    const ok = prod>=META_LEITURA;
+    badge.className='prod-badge '+(ok?'ok':'bad');
+    badge.textContent = `${prod.toFixed(1)}/hr ${ok?'✓ Acima da meta (175/hr)':'✗ Abaixo da meta (175/hr)'}`;
+  } else {
+    badge.className='prod-badge neutral';
+    badge.textContent = `${prod.toFixed(1)} PL/hr`;
+  }
+}
+
+// ── WHATSAPP ──
+function enviarWhatsApp(){
+  const nome   = document.getElementById('f-nome').value;
+  const data   = document.getElementById('f-data').value;
+  const ini    = document.getElementById('f-inicio').value;
+  const fim    = document.getElementById('f-fim').value;
+  const qtd    = parseFloat(document.getElementById('f-qtd').value);
+
+  if(!nome){ alerta('Selecione seu nome! / 名前を選択してください!'); return; }
+  if(!data){ alerta('Informe a data! / 日付を入力してください!'); return; }
+  if(!ini||!fim){ alerta('Informe os horários de início e término!'); return; }
+  if(fim<=ini){ alerta('Horário de término deve ser após o início!'); return; }
+  if(!tipoSelecionado){ alerta('Selecione o tipo de serviço! / 種別を選択!'); return; }
+  if(isNaN(qtd)||qtd<=0){ alerta('Informe a quantidade! / 数量を入力!'); return; }
+
+  const h = horasEntre(ini,fim);
+  const prod = h ? qtd/h : null;
+
+  const obj = { data, horaInicio:ini, horaFim:fim, colaborador:nome, tipo:tipoSelecionado, quantidade:qtd };
+  const code = '[PROD:'+btoa(unescape(encodeURIComponent(JSON.stringify(obj))))+']';
+
+  const tipoFmt = tipoSelecionado==='leitura'?'Leitura/Colagem (読取・貼付)':'Furidashi/Despachamento (振出・発送)';
+  const qtdFmt  = tipoSelecionado==='furidashi' ? qtd+' PL' : qtd+' unid';
+  const prodFmt = prod!==null ? prod.toFixed(1)+(tipoSelecionado==='furidashi'?' PL/hr':'/hr') : '—';
+
+  const [dy,dm,dd]=data.split('-');
+
+  const msg = `📊 *Registro de Produtividade / 生産性記録*\n`
+    +`━━━━━━━━━━━━━━━━━━\n`
+    +`👤 *Funcionário:* ${nome}\n`
+    +`📅 *Data:* ${dd}/${dm}/${dy}\n`
+    +`🕐 *Horário:* ${ini} → ${fim}\n`
+    +`🔧 *Serviço:* ${tipoFmt}\n`
+    +`📦 *Quantidade:* ${qtdFmt}\n`
+    +`⚡ *Produtividade:* ${prodFmt}\n`
+    +`━━━━━━━━━━━━━━━━━━\n`
+    +`🔑 *Código de importação:*\n${code}`;
+
+  // Mostrar resumo
+  document.getElementById('s-nome').textContent = nome;
+  document.getElementById('s-data').textContent = `${dd}/${dm}/${dy}`;
+  document.getElementById('s-hora').textContent = `${ini} → ${fim}`;
+  document.getElementById('s-tipo').textContent = tipoSelecionado==='leitura'?'Leitura/Colagem':'Furidashi/Despachamento';
+  document.getElementById('s-qtd').textContent  = qtdFmt;
+  document.getElementById('s-prod').textContent = prodFmt;
+  document.getElementById('summary').classList.add('show');
+
+  window.open('https://wa.me/818022049021?text='+encodeURIComponent(msg), '_blank');
+  toast('✅ WhatsApp aberto! / WhatsAppを開きました!');
+}
+
+// ── ADMIN ──
+function abrirAdmin(){
+  document.getElementById('admin-overlay').classList.add('open');
+  renderNomeList();
+}
+function fecharAdmin(){ document.getElementById('admin-overlay').classList.remove('open'); }
+function fecharAdminExterno(e){ if(e.target===document.getElementById('admin-overlay')) fecharAdmin(); }
+
+function renderNomeList(){
+  const nomes = carregarNomes();
+  const ul = document.getElementById('nome-list');
+  if(!nomes.length){
+    ul.innerHTML='<div class="empty-nomes">Nenhum nome cadastrado.<br>名前が登録されていません。</div>';
+    return;
+  }
+  ul.innerHTML = nomes.map((n,i)=>`
+    <li>
+      <span>${n}</span>
+      <button class="btn-del-nome" onclick="removerNome(${i})">🗑</button>
+    </li>`).join('');
+}
+
+async function adicionarNome(){
+  const inp = document.getElementById('admin-input');
+  const nome = inp.value.trim();
+  if(!nome){ toast('Digite um nome!', true); return; }
+  const nomes = carregarNomes();
+  if(nomes.includes(nome)){ toast('Nome já cadastrado!', true); return; }
+  nomes.push(nome);
+  nomes.sort();
+  await salvarNomesAsync(nomes);
+  inp.value='';
+  renderNomeList();
+  popularNomes();
+  toast('✅ '+nome+' adicionado!');
+}
+
+async function removerNome(i){
+  const nomes = carregarNomes();
+  const nome = nomes[i];
+  if(!confirm('Remover "'+nome+'"?\n「'+nome+'」を削除しますか？')) return;
+  nomes.splice(i,1);
+  await salvarNomesAsync(nomes);
+  renderNomeList();
+  popularNomes();
+  toast('🗑 Removido.');
+}
+
+// ── RELOAD NOMES (funcionários podem atualizar a lista) ──
+async function recarregarNomes(){
+  await carregarNomesAsync();
+  popularNomes();
+  renderNomeList();
+  toast('🔄 Lista atualizada!');
+}
+
+// ── AUTO UPDATE PREVIEW ON TIME CHANGE ──
+document.getElementById('f-inicio').addEventListener('change', calcularPreview);
+document.getElementById('f-fim').addEventListener('change', calcularPreview);
+
+// ── INIT ──
+(async function(){
+  const agora = new Date();
+  document.getElementById('f-data').value  = agora.toISOString().split('T')[0];
+  document.getElementById('f-inicio').value= agora.toTimeString().slice(0,5);
+  await carregarNomesAsync();
+  popularNomes();
+})();
+</script>
+</body>
+</html>
