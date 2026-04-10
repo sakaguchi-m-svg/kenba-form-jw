@@ -24,15 +24,36 @@ header{
   display:flex;
   align-items:center;
   justify-content:space-between;
+  gap:10px;
 }
-header .logo{display:flex;align-items:center;gap:10px;}
-header .logo .icon{font-size:1.8rem;}
-header h1{font-size:1.05rem;font-weight:700;line-height:1.3;}
+header .logo{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
+header .logo .icon{font-size:1.8rem;flex-shrink:0;}
+header h1{font-size:1.05rem;font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 header h1 small{display:block;font-size:.72rem;opacity:.8;font-weight:400;}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+
+/* ── LANGUAGE SELECTOR ── */
+.lang-btns{display:flex;gap:4px;}
+.lang-btn{
+  background:rgba(255,255,255,.15);
+  border:1.5px solid rgba(255,255,255,.3);
+  color:#fff;
+  padding:5px 9px;
+  border-radius:8px;
+  font-size:.72rem;
+  font-weight:700;
+  cursor:pointer;
+  font-family:inherit;
+  transition:.2s;
+  letter-spacing:.5px;
+}
+.lang-btn:hover{background:rgba(255,255,255,.25);}
+.lang-btn.active{background:rgba(255,255,255,.35);border-color:#fff;}
+
 .btn-gear{
   background:rgba(255,255,255,.15);
   border:none;color:#fff;
-  width:40px;height:40px;
+  width:36px;height:36px;
   border-radius:50%;
   font-size:1.1rem;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
@@ -46,13 +67,11 @@ header h1 small{display:block;font-size:.72rem;opacity:.8;font-weight:400;}
 /* ── CARD ── */
 .card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.1);margin-bottom:16px;}
 .card h2{font-size:.95rem;font-weight:700;color:var(--blue);margin-bottom:16px;display:flex;align-items:center;gap:6px;}
-.card h2 .jp{font-weight:400;color:#a0aec0;font-size:.78rem;}
 
 /* ── FORM FIELDS ── */
 .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
 .fg:last-of-type{margin-bottom:0;}
 label{font-size:.78rem;font-weight:700;color:#4a5568;}
-label .jp{font-weight:400;color:#a0aec0;font-size:.7rem;display:inline;}
 input,select{
   padding:13px 14px;
   border:1.5px solid #e2e8f0;
@@ -84,7 +103,6 @@ input:focus,select:focus{outline:none;border-color:var(--blue);background:#fff;}
 .tipo-btn.selected.furidashi{border-color:var(--green);background:#f0fff4;}
 .tipo-btn .tipo-icon{font-size:1.6rem;display:block;margin-bottom:4px;}
 .tipo-btn .tipo-name{font-size:.78rem;font-weight:700;color:#2d3748;}
-.tipo-btn .tipo-jp{font-size:.68rem;color:#a0aec0;display:block;}
 
 /* ── SEND BUTTON ── */
 .btn-send{
@@ -155,7 +173,6 @@ input:focus,select:focus{outline:none;border-color:var(--blue);background:#fff;}
 }
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .admin-panel h3{font-size:1rem;font-weight:700;color:var(--blue);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;}
-.admin-panel h3 .jp{font-weight:400;color:#a0aec0;font-size:.78rem;}
 .btn-close-admin{background:none;border:none;font-size:1.3rem;cursor:pointer;color:#718096;padding:4px;}
 .admin-add-row{display:flex;gap:10px;margin-bottom:16px;}
 .admin-add-row input{flex:1;}
@@ -184,14 +201,42 @@ input:focus,select:focus{outline:none;border-color:var(--blue);background:#fff;}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 #toast.err{background:var(--red);}
 
-/* ── PROD DISPLAY ── */
-.prod-badge{
-  display:inline-block;padding:4px 12px;border-radius:999px;
-  font-size:.8rem;font-weight:700;margin-top:6px;
+/* ── PASSWORD OVERLAY ── */
+.pwd-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.55);
+  z-index:150;display:none;
+  align-items:center;justify-content:center;
 }
-.prod-badge.ok{background:#c6f6d5;color:#276749;}
-.prod-badge.bad{background:#fed7d7;color:#c53030;}
-.prod-badge.neutral{background:#e2e8f0;color:#4a5568;}
+.pwd-overlay.open{display:flex;}
+.pwd-box{
+  background:#fff;
+  border-radius:18px;
+  padding:28px 24px 24px;
+  width:calc(100% - 48px);
+  max-width:340px;
+  box-shadow:0 8px 32px rgba(0,0,0,.2);
+  animation:popIn .2s ease-out;
+}
+@keyframes popIn{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+.pwd-box h4{font-size:.95rem;font-weight:700;color:var(--blue);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.pwd-box p{font-size:.78rem;color:#718096;margin-bottom:16px;}
+.pwd-input-row{display:flex;gap:8px;}
+.pwd-input-row input{flex:1;}
+.btn-pwd-ok{
+  padding:0 18px;background:var(--blue);color:#fff;border:none;
+  border-radius:10px;font-weight:700;cursor:pointer;font-size:.9rem;
+  font-family:inherit;flex-shrink:0;
+}
+.btn-pwd-ok:hover{background:var(--blue-dark);}
+.pwd-err{font-size:.75rem;color:var(--red);margin-top:8px;display:none;}
+.pwd-err.show{display:block;}
+.pwd-cancel{
+  display:block;width:100%;margin-top:12px;
+  background:none;border:1px solid #e2e8f0;border-radius:10px;
+  padding:10px;color:#718096;font-size:.82rem;cursor:pointer;
+  font-family:inherit;
+}
+.pwd-cancel:hover{background:#f7fafc;}
 </style>
 </head>
 <body>
@@ -200,10 +245,17 @@ input:focus,select:focus{outline:none;border-color:var(--blue);background:#fff;}
   <div class="logo">
     <div class="icon">📋</div>
     <div>
-      <h1>Registro de Produtividade <small>生産性記録フォーム</small></h1>
+      <h1 id="header-title">Registro de Produtividade</h1>
     </div>
   </div>
-  <button class="btn-gear" onclick="abrirAdmin()" title="Gerenciar nomes / 名前管理">⚙️</button>
+  <div class="header-right">
+    <div class="lang-btns">
+      <button class="lang-btn active" onclick="setLang('pt')" id="lang-pt">PT</button>
+      <button class="lang-btn" onclick="setLang('jp')" id="lang-jp">JP</button>
+      <button class="lang-btn" onclick="setLang('id')" id="lang-id">ID</button>
+    </div>
+    <button class="btn-gear" id="btn-gear" onclick="abrirAdmin()" title="Gerenciar nomes">⚙️</button>
+  </div>
 </header>
 
 <div class="container">
@@ -212,70 +264,62 @@ input:focus,select:focus{outline:none;border-color:var(--blue);background:#fff;}
 
   <!-- FORM -->
   <div class="card">
-    <h2>📝 Preencha seus dados <span class="jp">/ データを入力してください</span></h2>
+    <h2 id="form-title">📝 Preencha seus dados</h2>
 
     <div class="fg">
-      <label>Nome do Funcionário / <span class="jp">従業員名</span></label>
+      <label id="lbl-nome">Nome do Funcionário</label>
       <select id="f-nome">
-        <option value="">Selecione seu nome / 名前を選択</option>
+        <option value="" id="opt-placeholder">Selecione seu nome</option>
       </select>
     </div>
 
     <div class="fg">
-      <label>Data / <span class="jp">日付</span></label>
+      <label id="lbl-data">Data</label>
       <input type="date" id="f-data"/>
     </div>
 
     <div class="row2">
       <div class="fg">
-        <label>Início / <span class="jp">開始時刻</span></label>
+        <label id="lbl-inicio">Início</label>
         <input type="time" id="f-inicio"/>
       </div>
       <div class="fg">
-        <label>Término / <span class="jp">終了時刻</span></label>
+        <label id="lbl-fim">Término</label>
         <input type="time" id="f-fim"/>
       </div>
     </div>
 
     <div class="fg">
-      <label>Tipo de Serviço / <span class="jp">サービス種別</span></label>
+      <label id="lbl-tipo">Tipo de Serviço</label>
       <div class="tipo-btns">
         <button class="tipo-btn" id="btn-leitura" onclick="selecionarTipo('leitura')">
           <span class="tipo-icon">📖</span>
-          <span class="tipo-name">Leitura/Colagem</span>
-          <span class="tipo-jp">読取・貼付</span>
+          <span class="tipo-name" id="tipo-leitura-name">Leitura/Colagem</span>
         </button>
         <button class="tipo-btn furidashi" id="btn-furidashi" onclick="selecionarTipo('furidashi')">
           <span class="tipo-icon">📦</span>
-          <span class="tipo-name">Furidashi/Despach.</span>
-          <span class="tipo-jp">振出・発送</span>
+          <span class="tipo-name" id="tipo-furidashi-name">Furidashi/Despach.</span>
         </button>
       </div>
     </div>
 
     <div class="fg">
-      <label id="lbl-qtd">Quantidade / <span class="jp">数量</span></label>
-      <input type="number" id="f-qtd" placeholder="Ex: 150" min="0" inputmode="numeric" onchange="calcularPreview()"/>
-    </div>
-
-    <!-- PREVIEW DE PRODUTIVIDADE -->
-    <div id="prod-preview" style="display:none;margin-top:-4px;margin-bottom:14px;">
-      <div style="font-size:.72rem;color:#718096;margin-bottom:3px">Produtividade calculada / 計算された生産性:</div>
-      <span id="prod-badge" class="prod-badge neutral">—</span>
+      <label id="lbl-qtd">Quantidade</label>
+      <input type="number" id="f-qtd" placeholder="Ex: 150" min="0" inputmode="numeric"/>
     </div>
 
   </div>
 
   <!-- RESUMO -->
   <div id="summary" class="summary">
-    <div class="sum-title">✅ Resumo do Registro / 登録内容の確認</div>
+    <div class="sum-title" id="sum-title">✅ Resumo do Registro</div>
     <table>
-      <tr><td>Funcionário / 従業員</td><td id="s-nome">—</td></tr>
-      <tr><td>Data / 日付</td><td id="s-data">—</td></tr>
-      <tr><td>Horário / 時刻</td><td id="s-hora">—</td></tr>
-      <tr><td>Tipo / 種別</td><td id="s-tipo">—</td></tr>
-      <tr><td>Qtd / PL</td><td id="s-qtd">—</td></tr>
-      <tr><td>Produtividade / 生産性</td><td id="s-prod">—</td></tr>
+      <tr><td id="sum-lbl-nome">Funcionário</td><td id="s-nome">—</td></tr>
+      <tr><td id="sum-lbl-data">Data</td><td id="s-data">—</td></tr>
+      <tr><td id="sum-lbl-hora">Horário</td><td id="s-hora">—</td></tr>
+      <tr><td id="sum-lbl-tipo">Tipo</td><td id="s-tipo">—</td></tr>
+      <tr><td id="sum-lbl-qtd">Qtd / PL</td><td id="s-qtd">—</td></tr>
+      <tr><td id="sum-lbl-prod">Produtividade</td><td id="s-prod">—</td></tr>
     </table>
   </div>
 
@@ -284,12 +328,11 @@ input:focus,select:focus{outline:none;border-color:var(--blue);background:#fff;}
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
     </svg>
-    Enviar por WhatsApp / WhatsAppで送信
+    <span id="btn-send-text">Enviar por WhatsApp</span>
   </button>
 
-  <div style="text-align:center;font-size:.72rem;color:#a0aec0;margin-top:12px;">
-    Após enviar, o gerente importará os dados no dashboard.<br>
-    送信後、管理者がダッシュボードにデータを取り込みます。
+  <div id="footer-note" style="text-align:center;font-size:.72rem;color:#a0aec0;margin-top:12px;">
+    Após enviar, o gerente importará os dados no dashboard.
   </div>
 
 </div>
@@ -298,18 +341,31 @@ input:focus,select:focus{outline:none;border-color:var(--blue);background:#fff;}
 <div class="admin-overlay" id="admin-overlay" onclick="fecharAdminExterno(event)">
   <div class="admin-panel">
     <h3>
-      ⚙️ Gerenciar Funcionários <span class="jp">/ 従業員管理</span>
+      <span id="admin-title">⚙️ Gerenciar Funcionários</span>
       <button class="btn-close-admin" onclick="fecharAdmin()">✕</button>
     </h3>
-    <div class="admin-info">
+    <div class="admin-info" id="admin-info">
       ℹ️ Adicione os nomes dos funcionários aqui. Esta lista aparecerá no formulário.
-      <br>従業員名を追加してください。この一覧がフォームに表示されます。
     </div>
     <div class="admin-add-row">
-      <input type="text" id="admin-input" placeholder="Nome do funcionário / 従業員名" onkeydown="if(event.key==='Enter')adicionarNome()"/>
-      <button class="btn-add-nome" onclick="adicionarNome()">＋ Adicionar</button>
+      <input type="text" id="admin-input" onkeydown="if(event.key==='Enter')adicionarNome()"/>
+      <button class="btn-add-nome" id="btn-add-nome" onclick="adicionarNome()">＋ Adicionar</button>
     </div>
     <ul class="nome-list" id="nome-list"></ul>
+  </div>
+</div>
+
+<!-- PASSWORD OVERLAY -->
+<div class="pwd-overlay" id="pwd-overlay">
+  <div class="pwd-box">
+    <h4>🔒 <span id="pwd-title">Acesso Restrito</span></h4>
+    <p id="pwd-desc">Digite a senha para acessar o painel de funcionários.</p>
+    <div class="pwd-input-row">
+      <input type="password" id="pwd-input" onkeydown="if(event.key==='Enter')verificarSenha()"/>
+      <button class="btn-pwd-ok" id="btn-pwd-ok" onclick="verificarSenha()">OK</button>
+    </div>
+    <div class="pwd-err" id="pwd-err">Senha incorreta. Tente novamente.</div>
+    <button class="pwd-cancel" id="btn-pwd-cancel" onclick="fecharSenha()">Cancelar</button>
   </div>
 </div>
 
@@ -317,69 +373,292 @@ input:focus,select:focus{outline:none;border-color:var(--blue);background:#fff;}
 
 <script>
 const NOMES_KEY = 'form_nomes_v1';
-const META_LEITURA = 175;
+const ADMIN_PASSWORD = 'Joy1234';
 let tipoSelecionado = '';
 let nomesCache = [];
+let currentLang = localStorage.getItem('form_lang') || 'pt';
 
-// ── HTTP MODE DETECTION ──
-const IS_HTTP = location.protocol === 'http:' || location.protocol === 'https:';
-
-// ── NOMES: prioridade: hash URL → servidor HTTP → localStorage ──
-async function carregarNomesAsync(){
-  // 1. Link compartilhado com nomes no hash (#nomes=BASE64)
-  const hashMatch = location.hash.match(/#nomes=([A-Za-z0-9+/=]+)/);
-  if(hashMatch){
-    try{
-      const decoded = JSON.parse(decodeURIComponent(escape(atob(hashMatch[1]))));
-      if(Array.isArray(decoded) && decoded.length){
-        nomesCache = decoded;
-        // Salva no localStorage para próximas visitas sem o hash
-        localStorage.setItem(NOMES_KEY, JSON.stringify(nomesCache));
-        mostrarBannerAtualizado();
-        return nomesCache;
-      }
-    } catch(e){}
+// ── TRANSLATIONS ──
+const T = {
+  pt: {
+    headerTitle: 'Registro de Produtividade',
+    formTitle: '📝 Preencha seus dados',
+    lblNome: 'Nome do Funcionário',
+    optPlaceholder: 'Selecione seu nome',
+    lblData: 'Data',
+    lblInicio: 'Início',
+    lblFim: 'Término',
+    lblTipo: 'Tipo de Serviço',
+    tipoLeitura: 'Leitura/Colagem',
+    tipoFuridashi: 'Furidashi/Despach.',
+    lblQtd: 'Quantidade',
+    lblQtdFuridashi: 'PL',
+    placeholderQtd: 'Ex: 150',
+    placeholderQtdFuridashi: 'Ex: 10',
+    lblProdCalc: 'Produtividade calculada:',
+    sumTitle: '✅ Resumo do Registro',
+    sumNome: 'Funcionário',
+    sumData: 'Data',
+    sumHora: 'Horário',
+    sumTipo: 'Tipo',
+    sumQtd: 'Qtd / PL',
+    sumProd: 'Produtividade',
+    btnSend: 'Enviar por WhatsApp',
+    footerNote: 'Após enviar, o gerente importará os dados no dashboard.',
+    adminTitle: '⚙️ Gerenciar Funcionários',
+    adminInfo: 'ℹ️ Adicione os nomes dos funcionários aqui. Esta lista aparecerá no formulário.',
+    adminInputPlaceholder: 'Nome do funcionário',
+    btnAdd: '＋ Adicionar',
+    errNome: 'Selecione seu nome!',
+    errData: 'Informe a data!',
+    errHora: 'Informe os horários de início e término!',
+    errHoraInvalid: 'Horário de término deve ser após o início!',
+    errTipo: 'Selecione o tipo de serviço!',
+    errQtd: 'Informe a quantidade!',
+    toastAdded: 'adicionado!',
+    toastRemoved: '🗑 Removido.',
+    toastUpdated: '🔄 Lista atualizada!',
+    toastWhatsApp: '✅ WhatsApp aberto!',
+    toastNomeEmpty: 'Digite um nome!',
+    toastNomeDup: 'Nome já cadastrado!',
+    confirmRemove: 'Remover',
+    confirmRemoveSuffix: '?',
+    emptyNomes: 'Nenhum nome cadastrado.',
+    prodAcima: 'Acima da meta (175/hr)',
+    prodAbaixo: 'Abaixo da meta (175/hr)',
+    msgHeader: '📊 *Registro de Produtividade*',
+    msgFuncionario: 'Funcionário',
+    msgData: 'Data',
+    msgHorario: 'Horário',
+    msgServico: 'Serviço',
+    msgQuantidade: 'Quantidade',
+    msgProdutividade: 'Produtividade',
+    msgCodigo: '🔑 *Código de importação:*',
+    tipoLeituraFull: 'Leitura/Colagem',
+    tipoFuridashiFull: 'Furidashi/Despachamento',
+    gearTitle: 'Gerenciar nomes',
+    pwdTitle: 'Acesso Restrito',
+    pwdDesc: 'Digite a senha para acessar o painel de funcionários.',
+    pwdErr: 'Senha incorreta. Tente novamente.',
+    pwdCancel: 'Cancelar',
+  },
+  jp: {
+    headerTitle: '生産性記録フォーム',
+    formTitle: '📝 データを入力してください',
+    lblNome: '従業員名',
+    optPlaceholder: '名前を選択',
+    lblData: '日付',
+    lblInicio: '開始時刻',
+    lblFim: '終了時刻',
+    lblTipo: 'サービス種別',
+    tipoLeitura: '読取・貼付',
+    tipoFuridashi: '振出・発送',
+    lblQtd: '数量',
+    lblQtdFuridashi: 'PL数量',
+    placeholderQtd: '例: 150',
+    placeholderQtdFuridashi: '例: 10',
+    lblProdCalc: '計算された生産性:',
+    sumTitle: '✅ 登録内容の確認',
+    sumNome: '従業員',
+    sumData: '日付',
+    sumHora: '時刻',
+    sumTipo: '種別',
+    sumQtd: '数量 / PL',
+    sumProd: '生産性',
+    btnSend: 'WhatsAppで送信',
+    footerNote: '送信後、管理者がダッシュボードにデータを取り込みます。',
+    adminTitle: '⚙️ 従業員管理',
+    adminInfo: 'ℹ️ 従業員名を追加してください。この一覧がフォームに表示されます。',
+    adminInputPlaceholder: '従業員名',
+    btnAdd: '＋ 追加',
+    errNome: '名前を選択してください！',
+    errData: '日付を入力してください！',
+    errHora: '開始・終了時刻を入力してください！',
+    errHoraInvalid: '終了時刻は開始時刻より後にしてください！',
+    errTipo: '種別を選択してください！',
+    errQtd: '数量を入力してください！',
+    toastAdded: '追加しました！',
+    toastRemoved: '🗑 削除しました。',
+    toastUpdated: '🔄 リストを更新しました！',
+    toastWhatsApp: '✅ WhatsAppを開きました！',
+    toastNomeEmpty: '名前を入力してください！',
+    toastNomeDup: 'この名前はすでに登録されています！',
+    confirmRemove: '削除しますか',
+    confirmRemoveSuffix: '？',
+    emptyNomes: '名前が登録されていません。',
+    prodAcima: '目標達成 (175/hr以上)',
+    prodAbaixo: '目標未達 (175/hr未満)',
+    msgHeader: '📊 *生産性記録*',
+    msgFuncionario: '従業員',
+    msgData: '日付',
+    msgHorario: '時刻',
+    msgServico: 'サービス',
+    msgQuantidade: '数量',
+    msgProdutividade: '生産性',
+    msgCodigo: '🔑 *インポートコード:*',
+    tipoLeituraFull: '読取・貼付',
+    tipoFuridashiFull: '振出・発送',
+    gearTitle: '名前管理',
+    pwdTitle: 'アクセス制限',
+    pwdDesc: '従業員パネルにアクセスするためのパスワードを入力してください。',
+    pwdErr: 'パスワードが正しくありません。もう一度お試しください。',
+    pwdCancel: 'キャンセル',
+  },
+  id: {
+    headerTitle: 'Catatan Produktivitas',
+    formTitle: '📝 Isi data Anda',
+    lblNome: 'Nama Karyawan',
+    optPlaceholder: 'Pilih nama Anda',
+    lblData: 'Tanggal',
+    lblInicio: 'Mulai',
+    lblFim: 'Selesai',
+    lblTipo: 'Jenis Layanan',
+    tipoLeitura: 'Baca/Tempel',
+    tipoFuridashi: 'Furidashi/Kirim',
+    lblQtd: 'Jumlah',
+    lblQtdFuridashi: 'Jumlah PL',
+    placeholderQtd: 'Contoh: 150',
+    placeholderQtdFuridashi: 'Contoh: 10',
+    lblProdCalc: 'Produktivitas terhitung:',
+    sumTitle: '✅ Ringkasan Catatan',
+    sumNome: 'Karyawan',
+    sumData: 'Tanggal',
+    sumHora: 'Waktu',
+    sumTipo: 'Jenis',
+    sumQtd: 'Jml / PL',
+    sumProd: 'Produktivitas',
+    btnSend: 'Kirim via WhatsApp',
+    footerNote: 'Setelah mengirim, manajer akan mengimpor data ke dashboard.',
+    adminTitle: '⚙️ Kelola Karyawan',
+    adminInfo: 'ℹ️ Tambahkan nama karyawan di sini. Daftar ini akan muncul di formulir.',
+    adminInputPlaceholder: 'Nama karyawan',
+    btnAdd: '＋ Tambah',
+    errNome: 'Pilih nama Anda!',
+    errData: 'Masukkan tanggal!',
+    errHora: 'Masukkan waktu mulai dan selesai!',
+    errHoraInvalid: 'Waktu selesai harus setelah waktu mulai!',
+    errTipo: 'Pilih jenis layanan!',
+    errQtd: 'Masukkan jumlah!',
+    toastAdded: 'ditambahkan!',
+    toastRemoved: '🗑 Dihapus.',
+    toastUpdated: '🔄 Daftar diperbarui!',
+    toastWhatsApp: '✅ WhatsApp dibuka!',
+    toastNomeEmpty: 'Masukkan nama!',
+    toastNomeDup: 'Nama sudah terdaftar!',
+    confirmRemove: 'Hapus',
+    confirmRemoveSuffix: '?',
+    emptyNomes: 'Belum ada nama terdaftar.',
+    prodAcima: 'Di atas target (175/hr)',
+    prodAbaixo: 'Di bawah target (175/hr)',
+    msgHeader: '📊 *Catatan Produktivitas*',
+    msgFuncionario: 'Karyawan',
+    msgData: 'Tanggal',
+    msgHorario: 'Waktu',
+    msgServico: 'Layanan',
+    msgQuantidade: 'Jumlah',
+    msgProdutividade: 'Produktivitas',
+    msgCodigo: '🔑 *Kode impor:*',
+    tipoLeituraFull: 'Baca/Tempel',
+    tipoFuridashiFull: 'Furidashi/Pengiriman',
+    gearTitle: 'Kelola nama',
+    pwdTitle: 'Akses Terbatas',
+    pwdDesc: 'Masukkan kata sandi untuk mengakses panel karyawan.',
+    pwdErr: 'Kata sandi salah. Coba lagi.',
+    pwdCancel: 'Batal',
   }
-  // 2. Servidor local (iniciar.bat)
-  if(IS_HTTP){
-    try{
-      const r = await fetch('/nomes');
-      const data = await r.json();
-      if(Array.isArray(data)){ nomesCache = data; return nomesCache; }
-    } catch(e){}
-  }
-  // 3. localStorage (fallback)
-  nomesCache = JSON.parse(localStorage.getItem(NOMES_KEY)||'[]');
-  return nomesCache;
-}
+};
 
-function mostrarBannerAtualizado(){
-  const existing = document.getElementById('banner-nomes');
-  if(existing) return;
-  const b = document.createElement('div');
-  b.id = 'banner-nomes';
-  b.style.cssText = 'background:#c6f6d5;border:1px solid #9ae6b4;border-radius:10px;padding:10px 14px;font-size:.78rem;color:#276749;margin-bottom:14px;display:flex;align-items:center;gap:8px;';
-  b.innerHTML = '✅ Lista de nomes atualizada pelo gerente! / 管理者から名前リストが更新されました。';
-  const container = document.querySelector('.container');
-  if(container) container.insertBefore(b, container.firstChild);
-  setTimeout(()=>b.remove(), 5000);
-}
+// ── APPLY LANGUAGE ──
+function setLang(lang){
+  currentLang = lang;
+  localStorage.setItem('form_lang', lang);
 
-async function salvarNomesAsync(arr){
-  nomesCache = [...arr];
-  if(IS_HTTP){
-    try{
-      await fetch('/nomes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(arr)});
-    } catch(e){
-      localStorage.setItem(NOMES_KEY, JSON.stringify(arr));
-    }
+  // Update button states
+  ['pt','jp','id'].forEach(l => {
+    document.getElementById('lang-'+l).classList.toggle('active', l===lang);
+  });
+
+  const t = T[lang];
+
+  // Header
+  document.getElementById('header-title').textContent = t.headerTitle;
+  document.getElementById('btn-gear').title = t.gearTitle;
+
+  // Form
+  document.getElementById('form-title').textContent = t.formTitle;
+  document.getElementById('lbl-nome').textContent = t.lblNome;
+  document.getElementById('opt-placeholder').textContent = t.optPlaceholder;
+  document.getElementById('lbl-data').textContent = t.lblData;
+  document.getElementById('lbl-inicio').textContent = t.lblInicio;
+  document.getElementById('lbl-fim').textContent = t.lblFim;
+  document.getElementById('lbl-tipo').textContent = t.lblTipo;
+  document.getElementById('tipo-leitura-name').textContent = t.tipoLeitura;
+  document.getElementById('tipo-furidashi-name').textContent = t.tipoFuridashi;
+
+  // Quantity label depends on current tipo
+  if(tipoSelecionado === 'furidashi'){
+    document.getElementById('lbl-qtd').textContent = t.lblQtdFuridashi;
+    document.getElementById('f-qtd').placeholder = t.placeholderQtdFuridashi;
   } else {
-    localStorage.setItem(NOMES_KEY, JSON.stringify(arr));
+    document.getElementById('lbl-qtd').textContent = t.lblQtd;
+    document.getElementById('f-qtd').placeholder = t.placeholderQtd;
+  }
+
+  // Summary
+  document.getElementById('sum-title').textContent = t.sumTitle;
+  document.getElementById('sum-lbl-nome').textContent = t.sumNome;
+  document.getElementById('sum-lbl-data').textContent = t.sumData;
+  document.getElementById('sum-lbl-hora').textContent = t.sumHora;
+  document.getElementById('sum-lbl-tipo').textContent = t.sumTipo;
+  document.getElementById('sum-lbl-qtd').textContent = t.sumQtd;
+  document.getElementById('sum-lbl-prod').textContent = t.sumProd;
+
+  // Send button & footer
+  document.getElementById('btn-send-text').textContent = t.btnSend;
+  document.getElementById('footer-note').textContent = t.footerNote;
+
+  // Admin panel
+  document.getElementById('admin-title').textContent = t.adminTitle;
+  document.getElementById('admin-info').textContent = t.adminInfo;
+  document.getElementById('admin-input').placeholder = t.adminInputPlaceholder;
+  document.getElementById('btn-add-nome').textContent = t.btnAdd;
+
+  // Password overlay
+  document.getElementById('pwd-title').textContent = t.pwdTitle;
+  document.getElementById('pwd-desc').textContent = t.pwdDesc;
+  document.getElementById('pwd-err').textContent = t.pwdErr;
+  document.getElementById('btn-pwd-cancel').textContent = t.pwdCancel;
+
+  renderNomeList();
+}
+
+// ── SUPABASE CONFIG ──
+const SB_URL = 'https://fpihpsmgldruorsotlon.supabase.co';
+const SB_KEY = 'sb_publishable_W5Wwrh5N3HsjUdx8IOvOJg_ovwoawXg';
+const SB_HEADERS = {
+  'apikey': SB_KEY,
+  'Authorization': 'Bearer ' + SB_KEY,
+  'Content-Type': 'application/json'
+};
+
+// ── NOMES via SUPABASE ──
+async function carregarNomesAsync(){
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/funcionarios?select=nome&order=nome`, {
+      headers: SB_HEADERS
+    });
+    if(!r.ok) throw new Error('Supabase error');
+    const data = await r.json();
+    nomesCache = data.map(row => row.nome);
+    return nomesCache;
+  } catch(e) {
+    console.error('Erro ao carregar nomes:', e);
+    nomesCache = [];
+    return nomesCache;
   }
 }
 
 function carregarNomes(){ return nomesCache; }
-function salvarNomes(arr){ salvarNomesAsync(arr); }
 
 function toast(msg, err=false){
   const t = document.getElementById('toast');
@@ -413,7 +692,7 @@ function popularNomes(){
   const sel = document.getElementById('f-nome');
   const nomes = carregarNomes();
   const cur = sel.value;
-  sel.innerHTML = '<option value="">Selecione seu nome / 名前を選択</option>'
+  sel.innerHTML = `<option value="">${T[currentLang].optPlaceholder}</option>`
     + nomes.map(n=>`<option value="${n}"${n===cur?' selected':''}>${n}</option>`).join('');
 }
 
@@ -422,39 +701,14 @@ function selecionarTipo(tipo){
   tipoSelecionado = tipo;
   document.getElementById('btn-leitura').classList.toggle('selected', tipo==='leitura');
   document.getElementById('btn-furidashi').classList.toggle('selected', tipo==='furidashi');
+  const t = T[currentLang];
   const lbl = document.getElementById('lbl-qtd');
   if(tipo==='furidashi'){
-    lbl.innerHTML = 'PL / <span class="jp">PL数量</span>';
-    document.getElementById('f-qtd').placeholder = 'Ex: 10';
+    lbl.textContent = t.lblQtdFuridashi;
+    document.getElementById('f-qtd').placeholder = t.placeholderQtdFuridashi;
   } else {
-    lbl.innerHTML = 'Quantidade / <span class="jp">数量</span>';
-    document.getElementById('f-qtd').placeholder = 'Ex: 150';
-  }
-  calcularPreview();
-}
-
-// ── PROD PREVIEW ──
-function calcularPreview(){
-  const ini = document.getElementById('f-inicio').value;
-  const fim = document.getElementById('f-fim').value;
-  const qtd = parseFloat(document.getElementById('f-qtd').value);
-  const badge = document.getElementById('prod-badge');
-  const preview = document.getElementById('prod-preview');
-
-  if(!ini||!fim||isNaN(qtd)||qtd<=0||!tipoSelecionado){ preview.style.display='none'; return; }
-  const h = horasEntre(ini,fim);
-  if(!h){ preview.style.display='none'; return; }
-
-  const prod = qtd/h;
-  preview.style.display='block';
-
-  if(tipoSelecionado==='leitura'){
-    const ok = prod>=META_LEITURA;
-    badge.className='prod-badge '+(ok?'ok':'bad');
-    badge.textContent = `${prod.toFixed(1)}/hr ${ok?'✓ Acima da meta (175/hr)':'✗ Abaixo da meta (175/hr)'}`;
-  } else {
-    badge.className='prod-badge neutral';
-    badge.textContent = `${prod.toFixed(1)} PL/hr`;
+    lbl.textContent = t.lblQtd;
+    document.getElementById('f-qtd').placeholder = t.placeholderQtd;
   }
 }
 
@@ -465,13 +719,14 @@ function enviarWhatsApp(){
   const ini    = document.getElementById('f-inicio').value;
   const fim    = document.getElementById('f-fim').value;
   const qtd    = parseFloat(document.getElementById('f-qtd').value);
+  const t      = T[currentLang];
 
-  if(!nome){ alerta('Selecione seu nome! / 名前を選択してください!'); return; }
-  if(!data){ alerta('Informe a data! / 日付を入力してください!'); return; }
-  if(!ini||!fim){ alerta('Informe os horários de início e término!'); return; }
-  if(fim<=ini){ alerta('Horário de término deve ser após o início!'); return; }
-  if(!tipoSelecionado){ alerta('Selecione o tipo de serviço! / 種別を選択!'); return; }
-  if(isNaN(qtd)||qtd<=0){ alerta('Informe a quantidade! / 数量を入力!'); return; }
+  if(!nome){ alerta(t.errNome); return; }
+  if(!data){ alerta(t.errData); return; }
+  if(!ini||!fim){ alerta(t.errHora); return; }
+  if(fim<=ini){ alerta(t.errHoraInvalid); return; }
+  if(!tipoSelecionado){ alerta(t.errTipo); return; }
+  if(isNaN(qtd)||qtd<=0){ alerta(t.errQtd); return; }
 
   const h = horasEntre(ini,fim);
   const prod = h ? qtd/h : null;
@@ -479,41 +734,69 @@ function enviarWhatsApp(){
   const obj = { data, horaInicio:ini, horaFim:fim, colaborador:nome, tipo:tipoSelecionado, quantidade:qtd };
   const code = '[PROD:'+btoa(unescape(encodeURIComponent(JSON.stringify(obj))))+']';
 
-  const tipoFmt = tipoSelecionado==='leitura'?'Leitura/Colagem (読取・貼付)':'Furidashi/Despachamento (振出・発送)';
+  const tipoFmt = tipoSelecionado==='leitura' ? t.tipoLeituraFull : t.tipoFuridashiFull;
   const qtdFmt  = tipoSelecionado==='furidashi' ? qtd+' PL' : qtd+' unid';
   const prodFmt = prod!==null ? prod.toFixed(1)+(tipoSelecionado==='furidashi'?' PL/hr':'/hr') : '—';
 
   const [dy,dm,dd]=data.split('-');
 
-  const msg = `📊 *Registro de Produtividade / 生産性記録*\n`
+  const msg = `${t.msgHeader}\n`
     +`━━━━━━━━━━━━━━━━━━\n`
-    +`👤 *Funcionário:* ${nome}\n`
-    +`📅 *Data:* ${dd}/${dm}/${dy}\n`
-    +`🕐 *Horário:* ${ini} → ${fim}\n`
-    +`🔧 *Serviço:* ${tipoFmt}\n`
-    +`📦 *Quantidade:* ${qtdFmt}\n`
-    +`⚡ *Produtividade:* ${prodFmt}\n`
+    +`👤 *${t.msgFuncionario}:* ${nome}\n`
+    +`📅 *${t.msgData}:* ${dd}/${dm}/${dy}\n`
+    +`🕐 *${t.msgHorario}:* ${ini} → ${fim}\n`
+    +`🔧 *${t.msgServico}:* ${tipoFmt}\n`
+    +`📦 *${t.msgQuantidade}:* ${qtdFmt}\n`
+    +`⚡ *${t.msgProdutividade}:* ${prodFmt}\n`
     +`━━━━━━━━━━━━━━━━━━\n`
-    +`🔑 *Código de importação:*\n${code}`;
+    +`${t.msgCodigo}\n${code}`;
 
   // Mostrar resumo
   document.getElementById('s-nome').textContent = nome;
   document.getElementById('s-data').textContent = `${dd}/${dm}/${dy}`;
   document.getElementById('s-hora').textContent = `${ini} → ${fim}`;
-  document.getElementById('s-tipo').textContent = tipoSelecionado==='leitura'?'Leitura/Colagem':'Furidashi/Despachamento';
+  document.getElementById('s-tipo').textContent = tipoFmt;
   document.getElementById('s-qtd').textContent  = qtdFmt;
   document.getElementById('s-prod').textContent = prodFmt;
   document.getElementById('summary').classList.add('show');
 
   window.open('https://wa.me/818022049021?text='+encodeURIComponent(msg), '_blank');
-  toast('✅ WhatsApp aberto! / WhatsAppを開きました!');
+  toast(t.toastWhatsApp);
+}
+
+// ── PASSWORD ──
+function abrirAdmin(){
+  // Show password prompt first
+  const overlay = document.getElementById('pwd-overlay');
+  const input = document.getElementById('pwd-input');
+  const errEl = document.getElementById('pwd-err');
+  errEl.classList.remove('show');
+  input.value = '';
+  overlay.classList.add('open');
+  setTimeout(()=>input.focus(), 100);
+}
+
+function verificarSenha(){
+  const input = document.getElementById('pwd-input');
+  const errEl = document.getElementById('pwd-err');
+  if(input.value === ADMIN_PASSWORD){
+    fecharSenha();
+    document.getElementById('admin-overlay').classList.add('open');
+    renderNomeList();
+  } else {
+    errEl.classList.add('show');
+    input.value = '';
+    input.focus();
+  }
+}
+
+function fecharSenha(){
+  document.getElementById('pwd-overlay').classList.remove('open');
+  document.getElementById('pwd-input').value = '';
+  document.getElementById('pwd-err').classList.remove('show');
 }
 
 // ── ADMIN ──
-function abrirAdmin(){
-  document.getElementById('admin-overlay').classList.add('open');
-  renderNomeList();
-}
 function fecharAdmin(){ document.getElementById('admin-overlay').classList.remove('open'); }
 function fecharAdminExterno(e){ if(e.target===document.getElementById('admin-overlay')) fecharAdmin(); }
 
@@ -521,53 +804,58 @@ function renderNomeList(){
   const nomes = carregarNomes();
   const ul = document.getElementById('nome-list');
   if(!nomes.length){
-    ul.innerHTML='<div class="empty-nomes">Nenhum nome cadastrado.<br>名前が登録されていません。</div>';
+    ul.innerHTML=`<div class="empty-nomes">${T[currentLang].emptyNomes}</div>`;
     return;
   }
-  ul.innerHTML = nomes.map((n,i)=>`
+  ul.innerHTML = nomes.map(n=>`
     <li>
       <span>${n}</span>
-      <button class="btn-del-nome" onclick="removerNome(${i})">🗑</button>
+      <button class="btn-del-nome" onclick="removerNome('${n.replace(/'/g,"\\'")}')">🗑</button>
     </li>`).join('');
 }
 
 async function adicionarNome(){
   const inp = document.getElementById('admin-input');
   const nome = inp.value.trim();
-  if(!nome){ toast('Digite um nome!', true); return; }
-  const nomes = carregarNomes();
-  if(nomes.includes(nome)){ toast('Nome já cadastrado!', true); return; }
-  nomes.push(nome);
-  nomes.sort();
-  await salvarNomesAsync(nomes);
-  inp.value='';
-  renderNomeList();
-  popularNomes();
-  toast('✅ '+nome+' adicionado!');
+  const t = T[currentLang];
+  if(!nome){ toast(t.toastNomeEmpty, true); return; }
+  if(nomesCache.includes(nome)){ toast(t.toastNomeDup, true); return; }
+
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/funcionarios`, {
+      method: 'POST',
+      headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ nome })
+    });
+    if(!r.ok) throw new Error('Erro ao adicionar');
+    await carregarNomesAsync();
+    inp.value = '';
+    renderNomeList();
+    popularNomes();
+    toast('✅ '+nome+' '+t.toastAdded);
+  } catch(e) {
+    toast('❌ Erro ao salvar. Verifique a conexão.', true);
+  }
 }
 
-async function removerNome(i){
-  const nomes = carregarNomes();
-  const nome = nomes[i];
-  if(!confirm('Remover "'+nome+'"?\n「'+nome+'」を削除しますか？')) return;
-  nomes.splice(i,1);
-  await salvarNomesAsync(nomes);
-  renderNomeList();
-  popularNomes();
-  toast('🗑 Removido.');
-}
+async function removerNome(nome){
+  const t = T[currentLang];
+  if(!confirm(t.confirmRemove+' "'+nome+'"'+t.confirmRemoveSuffix)) return;
 
-// ── RELOAD NOMES (funcionários podem atualizar a lista) ──
-async function recarregarNomes(){
-  await carregarNomesAsync();
-  popularNomes();
-  renderNomeList();
-  toast('🔄 Lista atualizada!');
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/funcionarios?nome=eq.${encodeURIComponent(nome)}`, {
+      method: 'DELETE',
+      headers: SB_HEADERS
+    });
+    if(!r.ok) throw new Error('Erro ao remover');
+    await carregarNomesAsync();
+    renderNomeList();
+    popularNomes();
+    toast(t.toastRemoved);
+  } catch(e) {
+    toast('❌ Erro ao remover. Verifique a conexão.', true);
+  }
 }
-
-// ── AUTO UPDATE PREVIEW ON TIME CHANGE ──
-document.getElementById('f-inicio').addEventListener('change', calcularPreview);
-document.getElementById('f-fim').addEventListener('change', calcularPreview);
 
 // ── INIT ──
 (async function(){
@@ -575,6 +863,7 @@ document.getElementById('f-fim').addEventListener('change', calcularPreview);
   document.getElementById('f-data').value  = agora.toISOString().split('T')[0];
   document.getElementById('f-inicio').value= agora.toTimeString().slice(0,5);
   await carregarNomesAsync();
+  setLang(currentLang);
   popularNomes();
 })();
 </script>
