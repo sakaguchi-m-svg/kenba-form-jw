@@ -756,22 +756,29 @@ async function enviarEmail(){
   btn.disabled = true;
   btnText.textContent = t.btnSending;
 
+  // Email sempre em japonês
+  const jp = T.jp;
+  const tipoFmtJP = tipoSelecionado==='leitura' ? jp.tipoLeituraFull : jp.tipoFuridashiFull;
+
   const message =
-    `${t.msgFuncionario}: ${nome}\n`
-   +`${t.msgData}: ${dd}/${dm}/${dy}\n`
-   +`${t.msgHorario}: ${ini} → ${fim}\n`
-   +`${t.msgServico}: ${tipoFmt}\n`
-   +`${t.msgQuantidade}: ${qtdFmt}\n`
-   +`${t.msgProdutividade}: ${prodFmt}\n`
-   +(obs ? `${t.msgObs}: ${obs}\n` : '')
-   +`\n${t.msgCodigo}\n${code}`;
+    `生産性記録\n`
+   +`━━━━━━━━━━━━━━━━━━\n`
+   +`👤 ${jp.msgFuncionario}: ${nome}\n`
+   +`📅 ${jp.msgData}: ${dd}/${dm}/${dy}\n`
+   +`🕐 ${jp.msgHorario}: ${ini} → ${fim}\n`
+   +`🔧 ${jp.msgServico}: ${tipoFmtJP}\n`
+   +`📦 ${jp.msgQuantidade}: ${qtdFmt}\n`
+   +`⚡ ${jp.msgProdutividade}: ${prodFmt}\n`
+   +(obs ? `📝 ${jp.msgObs}: ${obs}\n` : '')
+   +`━━━━━━━━━━━━━━━━━━\n`
+   +`🔑 インポートコード:\n${code}`;
 
   try {
     await emailjs.send('service_4nnwlp4', 'template_9ausxr8', {
       nome,
       data: `${dd}/${dm}/${dy}`,
       horario: `${ini} → ${fim}`,
-      tipo: tipoFmt,
+      tipo: tipoFmtJP,
       quantidade: qtdFmt,
       produtividade: prodFmt,
       observacoes: obs || '—',
