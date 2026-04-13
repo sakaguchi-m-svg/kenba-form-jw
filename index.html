@@ -204,6 +204,48 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);ba
 .empty-nomes{text-align:center;padding:20px;color:#a0aec0;font-size:.85rem;}
 .admin-info{background:#fffbeb;border:1px solid #fbd38d;border-radius:8px;padding:10px 12px;font-size:.75rem;color:#744210;margin-bottom:14px;}
 
+/* ── CODIGO BOX ── */
+.codigo-box{
+  background:#fff;
+  border:2px solid var(--blue);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:16px;
+  display:none;
+}
+.codigo-box.show{display:block;}
+.codigo-box .cod-title{font-size:.78rem;font-weight:700;color:var(--blue);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.codigo-text{
+  background:#f0f4f8;
+  border-radius:8px;
+  padding:10px 12px;
+  font-size:.72rem;
+  font-family:monospace;
+  color:#2d3748;
+  word-break:break-all;
+  margin-bottom:10px;
+  line-height:1.5;
+}
+.btn-copy{
+  width:100%;
+  padding:12px;
+  background:var(--blue);
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  font-size:.9rem;
+  font-weight:700;
+  cursor:pointer;
+  font-family:inherit;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  transition:.2s;
+}
+.btn-copy:hover{background:var(--blue-dark);}
+.btn-copy.copied{background:var(--green);}
+
 /* ── SUCCESS TOAST ── */
 #toast{
   position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);
@@ -342,6 +384,15 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);ba
     </table>
   </div>
 
+  <!-- CÓDIGO DE IMPORTAÇÃO -->
+  <div id="codigo-box" class="codigo-box">
+    <div class="cod-title">🔑 <span id="cod-title-text">Código de Importação</span></div>
+    <div class="codigo-text" id="cod-display">—</div>
+    <button class="btn-copy" id="btn-copy" onclick="copiarCodigo()">
+      📋 <span id="btn-copy-text">Copiar Código</span>
+    </button>
+  </div>
+
   <!-- BOTÃO EMAIL -->
   <button class="btn-send" id="btn-send" onclick="enviarEmail()">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -438,6 +489,10 @@ const T = {
     btnSending: 'Enviando...',
     toastSuccess: '✅ Email enviado com sucesso!',
     toastError: '❌ Erro ao enviar. Tente novamente.',
+    toastCopied: '✅ Código copiado!',
+    codTitle: '🔑 Código de Importação',
+    btnCopy: 'Copiar Código',
+    btnCopied: 'Copiado!',
     footerNote: 'Após enviar, o gerente receberá o email com os dados.',
     adminTitle: '⚙️ Gerenciar Funcionários',
     adminInfo: 'ℹ️ Adicione os nomes dos funcionários aqui. Esta lista aparecerá no formulário.',
@@ -503,6 +558,10 @@ const T = {
     btnSending: '送信中...',
     toastSuccess: '✅ メールを送信しました！',
     toastError: '❌ 送信エラー。もう一度お試しください。',
+    toastCopied: '✅ コードをコピーしました！',
+    codTitle: '🔑 インポートコード',
+    btnCopy: 'コードをコピー',
+    btnCopied: 'コピー済み！',
     footerNote: '送信後、管理者にメールが届きます。',
     adminTitle: '⚙️ 従業員管理',
     adminInfo: 'ℹ️ 従業員名を追加してください。この一覧がフォームに表示されます。',
@@ -568,6 +627,10 @@ const T = {
     btnSending: 'Mengirim...',
     toastSuccess: '✅ Email berhasil dikirim!',
     toastError: '❌ Gagal mengirim. Coba lagi.',
+    toastCopied: '✅ Kode disalin!',
+    codTitle: '🔑 Kode Impor',
+    btnCopy: 'Salin Kode',
+    btnCopied: 'Disalin!',
     footerNote: 'Setelah mengirim, manajer akan menerima email dengan data.',
     adminTitle: '⚙️ Kelola Karyawan',
     adminInfo: 'ℹ️ Tambahkan nama karyawan di sini. Daftar ini akan muncul di formulir.',
@@ -642,6 +705,8 @@ function setLang(lang){
   document.getElementById('lbl-obs').textContent = t.lblObs;
   document.getElementById('f-obs').placeholder = t.placeholderObs;
   document.getElementById('btn-send-text').textContent = t.btnSend;
+  document.getElementById('cod-title-text').textContent = t.codTitle;
+  document.getElementById('btn-copy-text').textContent = t.btnCopy;
   document.getElementById('footer-note').textContent = t.footerNote;
   document.getElementById('admin-title').textContent = t.adminTitle;
   document.getElementById('admin-info').textContent = t.adminInfo;
@@ -785,6 +850,12 @@ async function enviarEmail(){
       codigo: code,
       message
     });
+    // Mostrar código de importação
+    document.getElementById('cod-display').textContent = code;
+    document.getElementById('btn-copy-text').textContent = t.btnCopy;
+    document.getElementById('btn-copy').classList.remove('copied');
+    document.getElementById('codigo-box').classList.add('show');
+    document.getElementById('codigo-box').scrollIntoView({behavior:'smooth', block:'center'});
     toast(t.toastSuccess);
   } catch(e) {
     console.error('EmailJS error:', e);
@@ -793,6 +864,32 @@ async function enviarEmail(){
     btn.disabled = false;
     btnText.textContent = t.btnSend;
   }
+}
+
+// ── COPIAR CÓDIGO ──
+function copiarCodigo(){
+  const code = document.getElementById('cod-display').textContent;
+  const t = T[currentLang];
+  navigator.clipboard.writeText(code).then(()=>{
+    const btn = document.getElementById('btn-copy');
+    const btnText = document.getElementById('btn-copy-text');
+    btn.classList.add('copied');
+    btnText.textContent = t.btnCopied;
+    toast(t.toastCopied);
+    setTimeout(()=>{
+      btn.classList.remove('copied');
+      btnText.textContent = t.btnCopy;
+    }, 2500);
+  }).catch(()=>{
+    // Fallback para dispositivos sem clipboard API
+    const el = document.createElement('textarea');
+    el.value = code;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    toast(t.toastCopied);
+  });
 }
 
 // ── PASSWORD ──
