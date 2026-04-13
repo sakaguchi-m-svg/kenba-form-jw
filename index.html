@@ -93,7 +93,7 @@ input,select{
   -webkit-appearance:none;
   font-family:inherit;
 }
-input:focus,select:focus{outline:none;border-color:var(--blue);background:#fff;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);background:#fff;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 
 /* ── TIPO SELECTOR ── */
@@ -318,6 +318,11 @@ input:focus,select:focus{outline:none;border-color:var(--blue);background:#fff;}
       <input type="number" id="f-qtd" placeholder="Ex: 150" min="0" inputmode="numeric"/>
     </div>
 
+    <div class="fg">
+      <label id="lbl-obs">備考 / Observações</label>
+      <textarea id="f-obs" rows="3" placeholder="Ex: Máquina com problema..." style="padding:13px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:.95rem;color:#2d3748;background:#f7fafc;width:100%;font-family:inherit;resize:vertical;"></textarea>
+    </div>
+
   </div>
 
   <!-- RESUMO -->
@@ -330,6 +335,7 @@ input:focus,select:focus{outline:none;border-color:var(--blue);background:#fff;}
       <tr><td id="sum-lbl-tipo">Tipo</td><td id="s-tipo">—</td></tr>
       <tr><td id="sum-lbl-qtd">Qtd / PL</td><td id="s-qtd">—</td></tr>
       <tr><td id="sum-lbl-prod">Produtividade</td><td id="s-prod">—</td></tr>
+      <tr><td id="sum-lbl-obs">Observações</td><td id="s-obs" style="word-break:break-word;">—</td></tr>
     </table>
   </div>
 
@@ -412,6 +418,8 @@ const T = {
     lblQtdFuridashi: 'PL',
     placeholderQtd: 'Ex: 150',
     placeholderQtdFuridashi: 'Ex: 10',
+    lblObs: '備考 / Observações',
+    placeholderObs: 'Ex: Máquina com problema...',
     sumTitle: '✅ Resumo do Registro',
     sumNome: 'Funcionário',
     sumData: 'Data',
@@ -419,6 +427,8 @@ const T = {
     sumTipo: 'Tipo',
     sumQtd: 'Qtd / PL',
     sumProd: 'Produtividade',
+    sumObs: 'Observações',
+    msgObs: 'Observações',
     btnSend: 'Enviar por WhatsApp',
     footerNote: 'Após enviar, o gerente importará os dados no dashboard.',
     adminTitle: '⚙️ Gerenciar Funcionários',
@@ -470,6 +480,8 @@ const T = {
     lblQtdFuridashi: 'PL数量',
     placeholderQtd: '例: 150',
     placeholderQtdFuridashi: '例: 10',
+    lblObs: '備考',
+    placeholderObs: '例：機械に問題あり...',
     sumTitle: '✅ 登録内容の確認',
     sumNome: '従業員',
     sumData: '日付',
@@ -477,6 +489,8 @@ const T = {
     sumTipo: '種別',
     sumQtd: '数量 / PL',
     sumProd: '生産性',
+    sumObs: '備考',
+    msgObs: '備考',
     btnSend: 'WhatsAppで送信',
     footerNote: '送信後、管理者がダッシュボードにデータを取り込みます。',
     adminTitle: '⚙️ 従業員管理',
@@ -528,6 +542,8 @@ const T = {
     lblQtdFuridashi: 'Jumlah PL',
     placeholderQtd: 'Contoh: 150',
     placeholderQtdFuridashi: 'Contoh: 10',
+    lblObs: 'Catatan / 備考',
+    placeholderObs: 'Contoh: Mesin bermasalah...',
     sumTitle: '✅ Ringkasan Catatan',
     sumNome: 'Karyawan',
     sumData: 'Tanggal',
@@ -535,6 +551,8 @@ const T = {
     sumTipo: 'Jenis',
     sumQtd: 'Jml / PL',
     sumProd: 'Produktivitas',
+    sumObs: 'Catatan',
+    msgObs: 'Catatan',
     btnSend: 'Kirim via WhatsApp',
     footerNote: 'Setelah mengirim, manajer akan mengimpor data ke dashboard.',
     adminTitle: '⚙️ Kelola Karyawan',
@@ -606,6 +624,9 @@ function setLang(lang){
   document.getElementById('sum-lbl-tipo').textContent = t.sumTipo;
   document.getElementById('sum-lbl-qtd').textContent = t.sumQtd;
   document.getElementById('sum-lbl-prod').textContent = t.sumProd;
+  document.getElementById('sum-lbl-obs').textContent = t.sumObs;
+  document.getElementById('lbl-obs').textContent = t.lblObs;
+  document.getElementById('f-obs').placeholder = t.placeholderObs;
   document.getElementById('btn-send-text').textContent = t.btnSend;
   document.getElementById('footer-note').textContent = t.footerNote;
   document.getElementById('admin-title').textContent = t.adminTitle;
@@ -686,6 +707,7 @@ function enviarWhatsApp(){
   const ini  = document.getElementById('f-inicio').value;
   const fim  = document.getElementById('f-fim').value;
   const qtd  = parseFloat(document.getElementById('f-qtd').value);
+  const obs  = document.getElementById('f-obs').value.trim();
   const t    = T[currentLang];
 
   if(!nome){ alerta(t.errNome); return; }
@@ -713,6 +735,7 @@ function enviarWhatsApp(){
     +`📦 *${t.msgQuantidade}:* ${qtdFmt}\n`
     +`⚡ *${t.msgProdutividade}:* ${prodFmt}\n`
     +`━━━━━━━━━━━━━━━━━━\n`
+    +(obs ? `📝 *${t.msgObs}:* ${obs}\n` : '')
     +`${t.msgCodigo}\n${code}`;
 
   document.getElementById('s-nome').textContent = nome;
@@ -721,6 +744,7 @@ function enviarWhatsApp(){
   document.getElementById('s-tipo').textContent = tipoFmt;
   document.getElementById('s-qtd').textContent  = qtdFmt;
   document.getElementById('s-prod').textContent = prodFmt;
+  document.getElementById('s-obs').textContent  = obs || '—';
   document.getElementById('summary').classList.add('show');
 
   window.open('https://wa.me/818022049021?text='+encodeURIComponent(msg), '_blank');
